@@ -50,6 +50,51 @@ const defaultFormData: HardwareFormData = {
   notes: ''
 };
 
+// Category-specific placeholder examples
+const categoryExamples: Record<HardwareCategory, {
+  name: string;
+  model: string;
+  serialNumber: string;
+  cost: string;
+  vendor: string;
+}> = {
+  server: {
+    name: 'Dell PowerEdge R750',
+    model: 'PowerEdge R750',
+    serialNumber: 'SRV-2024-001',
+    cost: '45000',
+    vendor: 'Dell Technologies'
+  },
+  network: {
+    name: 'Cisco Catalyst 9300',
+    model: 'Catalyst 9300-48P',
+    serialNumber: 'NET-2024-001',
+    cost: '12500',
+    vendor: 'Cisco Systems'
+  },
+  storage: {
+    name: 'NetApp FAS2700',
+    model: 'FAS2700 AFF',
+    serialNumber: 'STR-2024-001',
+    cost: '85000',
+    vendor: 'NetApp'
+  },
+  ntp: {
+    name: 'Meinberg LANTIME M300',
+    model: 'LANTIME M300/GPS',
+    serialNumber: 'NTP-2024-001',
+    cost: '15000',
+    vendor: 'Meinberg'
+  },
+  other: {
+    name: 'Hardware Asset Name',
+    model: 'Model Number',
+    serialNumber: 'ASSET-2024-001',
+    cost: '10000',
+    vendor: 'Vendor Name'
+  }
+};
+
 export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareFormProps) {
   const [formData, setFormData] = useState<HardwareFormData>(
     initialData ? {
@@ -96,6 +141,8 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
     }
   };
 
+  const examples = categoryExamples[formData.category];
+
   const isOtherVendor = !HARDWARE_VENDORS.slice(0, -1).includes(formData.vendor) && formData.vendor !== '';
 
   return (
@@ -120,7 +167,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                   id="name"
                   value={formData.name}
                   onChange={e => updateField('name', e.target.value)}
-                  placeholder="e.g., Dell PowerEdge R750"
+                  placeholder={`e.g., ${examples.name}`}
                   required
                   className="bg-background border-border"
                 />
@@ -180,7 +227,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                   id="model"
                   value={formData.model}
                   onChange={e => updateField('model', e.target.value)}
-                  placeholder="e.g., PowerEdge R750"
+                  placeholder={`e.g., ${examples.model}`}
                   required
                   className="bg-background border-border"
                 />
@@ -191,7 +238,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                   id="serialNumber"
                   value={formData.serialNumber}
                   onChange={e => updateField('serialNumber', e.target.value)}
-                  placeholder="e.g., SRV-2024-001"
+                  placeholder={`e.g., ${examples.serialNumber}`}
                   required
                   className="bg-background border-border"
                 />
@@ -205,7 +252,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                   step="0.01"
                   value={formData.unitCost || ''}
                   onChange={e => updateField('unitCost', parseFloat(e.target.value) || 0)}
-                  placeholder="e.g., 45000"
+                  placeholder={`e.g., ${examples.cost}`}
                   required
                   className="bg-background border-border"
                 />
