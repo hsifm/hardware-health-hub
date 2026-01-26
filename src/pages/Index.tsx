@@ -24,25 +24,43 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+type StatusFilter = 'all' | 'healthy' | 'warning' | 'critical';
+
 const Index = () => {
   const { hardware, isLoading, addHardware, updateHardware, deleteHardware, getStats } = useHardware();
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Hardware | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const stats = getStats();
 
+  const handleStatusFilter = (status: StatusFilter) => {
+    setStatusFilter(prev => prev === status ? 'all' : status);
+  };
+
   const filteredHardware = useMemo(() => {
-    if (!searchQuery) return hardware;
-    const query = searchQuery.toLowerCase();
-    return hardware.filter(item =>
-      item.name.toLowerCase().includes(query) ||
-      item.vendor.toLowerCase().includes(query) ||
-      item.model.toLowerCase().includes(query) ||
-      item.serialNumber.toLowerCase().includes(query)
-    );
-  }, [hardware, searchQuery]);
+    let filtered = hardware;
+    
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(item => item.status === statusFilter);
+    }
+    
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(query) ||
+        item.vendor.toLowerCase().includes(query) ||
+        item.model.toLowerCase().includes(query) ||
+        item.serialNumber.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [hardware, searchQuery, statusFilter]);
 
   const handleAddNew = () => {
     setEditingItem(undefined);
@@ -100,6 +118,8 @@ const Index = () => {
             value={stats.total}
             icon={HardDrive}
             description="Registered hardware"
+            onClick={() => handleStatusFilter('all')}
+            isActive={statusFilter === 'all'}
           />
           <StatCard
             title="Healthy"
@@ -107,6 +127,8 @@ const Index = () => {
             icon={CheckCircle2}
             variant="success"
             description="All systems go"
+            onClick={() => handleStatusFilter('healthy')}
+            isActive={statusFilter === 'healthy'}
           />
           <StatCard
             title="Attention"
@@ -114,6 +136,8 @@ const Index = () => {
             icon={AlertTriangle}
             variant="warning"
             description="Needs review"
+            onClick={() => handleStatusFilter('warning')}
+            isActive={statusFilter === 'warning'}
           />
           <StatCard
             title="Critical"
@@ -121,6 +145,8 @@ const Index = () => {
             icon={XCircle}
             variant="destructive"
             description="Immediate action"
+            onClick={() => handleStatusFilter('critical')}
+            isActive={statusFilter === 'critical'}
           />
           <StatCard
             title="Maintenance"

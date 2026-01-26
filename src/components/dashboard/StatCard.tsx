@@ -7,11 +7,20 @@ interface StatCardProps {
   icon: LucideIcon;
   variant?: 'default' | 'success' | 'warning' | 'destructive';
   description?: string;
+  onClick?: () => void;
+  isActive?: boolean;
 }
 
-export function StatCard({ title, value, icon: Icon, variant = 'default', description }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, variant = 'default', description, onClick, isActive }: StatCardProps) {
   return (
-    <div className="glass-card rounded-xl p-6 transition-all hover:border-primary/30">
+    <div 
+      className={cn(
+        "glass-card rounded-xl p-6 transition-all",
+        onClick && "cursor-pointer hover:border-primary/50 hover:scale-[1.02]",
+        isActive && "ring-2 ring-primary border-primary/50"
+      )}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
