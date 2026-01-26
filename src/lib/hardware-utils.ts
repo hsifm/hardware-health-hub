@@ -24,18 +24,22 @@ export function calculateStatus(hardware: Omit<Hardware, 'status'>): 'healthy' |
     return 'warning';
   }
 
-  // Check if warranty or EOL is within 30 days
+  // Check if warranty is within 60 days
   const daysToWarrantyExpiry = differenceInDays(warrantyExpiry, today);
-  const daysToEndOfLife = differenceInDays(endOfLife, today);
-
-  if (daysToWarrantyExpiry <= 30 || daysToEndOfLife <= 30) {
+  if (daysToWarrantyExpiry <= 60) {
     return 'warning';
   }
 
-  // Check maintenance within 30 days
+  // Check if EOL is within 120 days
+  const daysToEndOfLife = differenceInDays(endOfLife, today);
+  if (daysToEndOfLife <= 120) {
+    return 'warning';
+  }
+
+  // Check maintenance within 60 days
   if (maintenanceExpiry) {
     const daysToMaintenanceExpiry = differenceInDays(maintenanceExpiry, today);
-    if (daysToMaintenanceExpiry <= 30) {
+    if (daysToMaintenanceExpiry <= 60) {
       return 'warning';
     }
   }
