@@ -1,9 +1,10 @@
-export type HardwareCategory = 'server' | 'network' | 'storage' | 'other';
+export type HardwareCategory = 'server' | 'network' | 'storage' | 'ntp' | 'other';
 
 export const HARDWARE_CATEGORIES: { value: HardwareCategory; label: string }[] = [
   { value: 'server', label: 'Server' },
   { value: 'network', label: 'Network Equipment' },
   { value: 'storage', label: 'Storage' },
+  { value: 'ntp', label: 'NTP' },
   { value: 'other', label: 'Other' },
 ];
 
@@ -11,6 +12,7 @@ export const HARDWARE_VENDORS = [
   'Dell Technologies',
   'Hewlett Packard Enterprise',
   'Cisco Systems',
+  'Meinberg',
   'NetApp',
   'Other',
 ];
