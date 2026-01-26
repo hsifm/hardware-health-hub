@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Hardware, HardwareFormData } from '@/types/hardware';
+import { Hardware, HardwareFormData, HARDWARE_CATEGORIES, HARDWARE_VENDORS, HardwareCategory } from '@/types/hardware';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface HardwareFormProps {
   open: boolean;
@@ -22,6 +28,7 @@ interface HardwareFormProps {
 
 const defaultFormData: HardwareFormData = {
   name: '',
+  category: 'server',
   vendor: '',
   model: '',
   serialNumber: '',
@@ -47,6 +54,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
   const [formData, setFormData] = useState<HardwareFormData>(
     initialData ? {
       name: initialData.name,
+      category: initialData.category,
       vendor: initialData.vendor,
       model: initialData.model,
       serialNumber: initialData.serialNumber,
@@ -61,10 +69,13 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
     } : defaultFormData
   );
 
+  const [customVendor, setCustomVendor] = useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
     setFormData(defaultFormData);
+    setCustomVendor('');
     onClose();
   };
 
@@ -74,6 +85,18 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
   ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleVendorChange = (value: string) => {
+    if (value === 'Other') {
+      setCustomVendor('');
+      updateField('vendor', '');
+    } else {
+      setCustomVendor('');
+      updateField('vendor', value);
+    }
+  };
+
+  const isOtherVendor = !HARDWARE_VENDORS.slice(0, -1).includes(formData.vendor) && formData.vendor !== '';
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -103,16 +126,54 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="vendor">Vendor *</Label>
-                <Input
-                  id="vendor"
-                  value={formData.vendor}
-                  onChange={e => updateField('vendor', e.target.value)}
-                  placeholder="e.g., Dell Technologies"
-                  required
-                  className="bg-background border-border"
-                />
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value: HardwareCategory) => updateField('category', value)}
+                >
+                  <SelectTrigger className="bg-background border-border">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {HARDWARE_CATEGORIES.map(cat => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="vendor">Vendor *</Label>
+                <Select
+                  value={isOtherVendor ? 'Other' : formData.vendor}
+                  onValueChange={handleVendorChange}
+                >
+                  <SelectTrigger className="bg-background border-border">
+                    <SelectValue placeholder="Select vendor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {HARDWARE_VENDORS.map(vendor => (
+                      <SelectItem key={vendor} value={vendor}>
+                        {vendor}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {(formData.vendor === '' && customVendor === '') || isOtherVendor ? (
+                <div className="space-y-2">
+                  <Label htmlFor="customVendor">Custom Vendor *</Label>
+                  <Input
+                    id="customVendor"
+                    value={isOtherVendor ? formData.vendor : customVendor}
+                    onChange={e => updateField('vendor', e.target.value)}
+                    placeholder="Enter vendor name"
+                    required={formData.vendor === ''}
+                    className="bg-background border-border"
+                  />
+                </div>
+              ) : null}
               <div className="space-y-2">
                 <Label htmlFor="model">Model *</Label>
                 <Input

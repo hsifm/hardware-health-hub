@@ -1,4 +1,4 @@
-import { Hardware } from '@/types/hardware';
+import { Hardware, HARDWARE_CATEGORIES } from '@/types/hardware';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -68,6 +68,7 @@ export function HardwareTable({ hardware, onEdit, onDelete }: HardwareTableProps
         <TableHeader>
           <TableRow className="border-border/50 hover:bg-transparent">
             <TableHead className="text-muted-foreground font-semibold">Asset</TableHead>
+            <TableHead className="text-muted-foreground font-semibold">Category</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Vendor</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Cost (AED)</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Warranty</TableHead>
@@ -85,6 +86,11 @@ export function HardwareTable({ hardware, onEdit, onDelete }: HardwareTableProps
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-muted-foreground">{item.serialNumber}</p>
                 </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant="secondary" className="font-medium">
+                  {HARDWARE_CATEGORIES.find(c => c.value === item.category)?.label || item.category}
+                </Badge>
               </TableCell>
               <TableCell>
                 <div>
