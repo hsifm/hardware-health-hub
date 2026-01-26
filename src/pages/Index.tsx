@@ -12,8 +12,6 @@ import {
   CheckCircle2, 
   AlertTriangle, 
   XCircle,
-  Wrench,
-  Shield,
   X
 } from 'lucide-react';
 import {
@@ -115,7 +113,7 @@ const Index = () => {
 
       <main className="container mx-auto px-6 py-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
             title="Total Assets"
             value={stats.total}
@@ -150,18 +148,6 @@ const Index = () => {
             description="Immediate action"
             onClick={() => handleStatusFilter('critical')}
             isActive={statusFilter === 'critical'}
-          />
-          <StatCard
-            title="Maintenance"
-            value={stats.withMaintenance}
-            icon={Wrench}
-            description="Active contracts"
-          />
-          <StatCard
-            title="Pro Support"
-            value={stats.withSupport}
-            icon={Shield}
-            description="With support plans"
           />
         </div>
 

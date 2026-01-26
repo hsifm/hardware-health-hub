@@ -25,6 +25,7 @@ const defaultFormData: HardwareFormData = {
   vendor: '',
   model: '',
   serialNumber: '',
+  unitCost: 0,
   purchaseDate: '',
   endOfLife: '',
   warrantyExpiry: '',
@@ -49,6 +50,7 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
       vendor: initialData.vendor,
       model: initialData.model,
       serialNumber: initialData.serialNumber,
+      unitCost: initialData.unitCost,
       purchaseDate: initialData.purchaseDate,
       endOfLife: initialData.endOfLife,
       warrantyExpiry: initialData.warrantyExpiry,
@@ -129,6 +131,20 @@ export function HardwareForm({ open, onClose, onSubmit, initialData }: HardwareF
                   value={formData.serialNumber}
                   onChange={e => updateField('serialNumber', e.target.value)}
                   placeholder="e.g., SRV-2024-001"
+                  required
+                  className="bg-background border-border"
+                />
+              </div>
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="unitCost">Unit Cost (AED) *</Label>
+                <Input
+                  id="unitCost"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.unitCost || ''}
+                  onChange={e => updateField('unitCost', parseFloat(e.target.value) || 0)}
+                  placeholder="e.g., 45000"
                   required
                   className="bg-background border-border"
                 />

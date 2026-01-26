@@ -4,6 +4,7 @@ export interface Hardware {
   vendor: string;
   model: string;
   serialNumber: string;
+  unitCost: number;
   purchaseDate: string;
   endOfLife: string;
   warrantyExpiry: string;
