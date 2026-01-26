@@ -9,6 +9,7 @@ const sampleData: Hardware[] = [
   {
     id: '1',
     name: 'Dell PowerEdge R750',
+    category: 'server',
     vendor: 'Dell Technologies',
     model: 'PowerEdge R750',
     serialNumber: 'SRV-2024-001',
@@ -35,6 +36,7 @@ const sampleData: Hardware[] = [
   {
     id: '2',
     name: 'HP ProLiant DL380',
+    category: 'server',
     vendor: 'Hewlett Packard Enterprise',
     model: 'ProLiant DL380 Gen10',
     serialNumber: 'SRV-2022-045',
@@ -61,6 +63,7 @@ const sampleData: Hardware[] = [
   {
     id: '3',
     name: 'Cisco Catalyst 9300',
+    category: 'network',
     vendor: 'Cisco Systems',
     model: 'Catalyst 9300-48P',
     serialNumber: 'NET-2021-012',
