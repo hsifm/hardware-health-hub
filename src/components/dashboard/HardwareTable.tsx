@@ -69,6 +69,7 @@ export function HardwareTable({ hardware, onEdit, onDelete }: HardwareTableProps
           <TableRow className="border-border/50 hover:bg-transparent">
             <TableHead className="text-muted-foreground font-semibold">Asset</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Vendor</TableHead>
+            <TableHead className="text-muted-foreground font-semibold">Cost (AED)</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Warranty</TableHead>
             <TableHead className="text-muted-foreground font-semibold">End of Life</TableHead>
             <TableHead className="text-muted-foreground font-semibold">Support</TableHead>
@@ -90,6 +91,9 @@ export function HardwareTable({ hardware, onEdit, onDelete }: HardwareTableProps
                   <p className="font-medium">{item.vendor}</p>
                   <p className="text-sm text-muted-foreground">{item.model}</p>
                 </div>
+              </TableCell>
+              <TableCell>
+                <p className="font-medium">{item.unitCost?.toLocaleString('en-AE')} AED</p>
               </TableCell>
               <TableCell>
                 <div>
