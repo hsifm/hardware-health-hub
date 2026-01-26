@@ -4,9 +4,16 @@ import { Header } from '@/components/dashboard/Header';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { HardwareTable } from '@/components/dashboard/HardwareTable';
 import { HardwareForm } from '@/components/dashboard/HardwareForm';
-import { Hardware, HardwareFormData } from '@/types/hardware';
+import { Hardware, HardwareFormData, HARDWARE_CATEGORIES, HardwareCategory } from '@/types/hardware';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   HardDrive, 
   CheckCircle2, 
@@ -26,11 +33,13 @@ import {
 } from '@/components/ui/alert-dialog';
 
 type StatusFilter = 'all' | 'healthy' | 'warning' | 'critical';
+type CategoryFilter = 'all' | HardwareCategory;
 
 const Index = () => {
   const { hardware, isLoading, addHardware, updateHardware, deleteHardware, getStats } = useHardware();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Hardware | undefined>();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -49,6 +58,11 @@ const Index = () => {
       filtered = filtered.filter(item => item.status === statusFilter);
     }
     
+    // Apply category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(item => item.category === categoryFilter);
+    }
+    
     // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -61,7 +75,14 @@ const Index = () => {
     }
     
     return filtered;
-  }, [hardware, searchQuery, statusFilter]);
+  }, [hardware, searchQuery, statusFilter, categoryFilter]);
+
+  const clearAllFilters = () => {
+    setStatusFilter('all');
+    setCategoryFilter('all');
+  };
+
+  const hasActiveFilters = statusFilter !== 'all' || categoryFilter !== 'all';
 
   const handleAddNew = () => {
     setEditingItem(undefined);
@@ -156,33 +177,55 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-semibold">Hardware Inventory</h2>
+              
+              {/* Category Filter Dropdown */}
+              <Select
+                value={categoryFilter}
+                onValueChange={(value: CategoryFilter) => setCategoryFilter(value)}
+              >
+                <SelectTrigger className="w-[180px] h-8 text-sm bg-background border-border">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {HARDWARE_CATEGORIES.map(cat => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Active Filter Badges */}
               {statusFilter !== 'all' && (
-                <div className="flex items-center gap-2">
-                  <Badge 
-                    variant="outline" 
-                    className={
-                      statusFilter === 'healthy' 
-                        ? 'bg-success/10 text-success border-success/30' 
-                        : statusFilter === 'warning'
-                        ? 'bg-warning/10 text-warning border-warning/30'
-                        : 'bg-destructive/10 text-destructive border-destructive/30'
-                    }
-                  >
-                    {statusFilter === 'healthy' && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                    {statusFilter === 'warning' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                    {statusFilter === 'critical' && <XCircle className="h-3 w-3 mr-1" />}
-                    {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} only
-                  </Badge>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setStatusFilter('all')}
-                    className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-3 w-3 mr-1" />
-                    Clear filter
-                  </Button>
-                </div>
+                <Badge 
+                  variant="outline" 
+                  className={
+                    statusFilter === 'healthy' 
+                      ? 'bg-success/10 text-success border-success/30' 
+                      : statusFilter === 'warning'
+                      ? 'bg-warning/10 text-warning border-warning/30'
+                      : 'bg-destructive/10 text-destructive border-destructive/30'
+                  }
+                >
+                  {statusFilter === 'healthy' && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                  {statusFilter === 'warning' && <AlertTriangle className="h-3 w-3 mr-1" />}
+                  {statusFilter === 'critical' && <XCircle className="h-3 w-3 mr-1" />}
+                  {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} only
+                </Badge>
+              )}
+
+              {/* Clear All Filters */}
+              {hasActiveFilters && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearAllFilters}
+                  className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Clear filters
+                </Button>
               )}
             </div>
             <p className="text-sm text-muted-foreground">
